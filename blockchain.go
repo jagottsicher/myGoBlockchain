@@ -30,7 +30,7 @@ func (b *Block) Print() {
 }
 
 type Blockchain struct {
-	transactionPoll []string
+	transactionPool []string
 	chain           []*Block
 }
 
