@@ -74,7 +74,7 @@ func (bc *Blockchain) Print() {
 		fmt.Printf("%s Block %d %s\n", strings.Repeat("=", 10), i, strings.Repeat("=", 10))
 		block.Print()
 	}
-	fmt.Printf("%s\n", strings.Repeat("#", 27))
+	fmt.Printf("%s\n", strings.Repeat("#", 30))
 }
 
 func (bc *Blockchain) LastBlock() *Block {
