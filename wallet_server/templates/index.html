@@ -1,10 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>  
-  	   <title>Styled Page</title>
-    		<link rel="stylesheet" type="text/css" href="styles.css">
+	<title>Wallet</title>
+	<!--
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	-->
+	<script src="https://ajax.microsoft.com/ajax/jquery/jquery-3.7.1.min.js"></script>
 </head>
-<body>   
-	<h1>Hello World</h1>	
+<body style="background-color: darkslategray; color:beige">
+	<div>
+		<h3>Wallet</h3>
+		<span style="font-size: larger;" id="wallet_amount">0</span>
+		<button id="reload_wallet">Reload</button>
+
+		<p>Public Key</p>
+		<textarea id="public_key" rows="2" cols="63"></textarea>
+		<p>Private Key</p>
+		<textarea id="private_key" rows="1" cols="63"></textarea>
+		<p>Blockchain Address</p>
+		<textarea id="blockchain_address" rows="1" cols="63"></textarea>
+	</div>
+
+	<div>
+		<h3>Send Value</h3>
+		<div>
+			<p>
+				Address <input id="recipient_blockchain_address" size="48" type="text">
+			</p>
+			<p>
+				Amount <input id="recipient_blockchain_address" size="5" type="text">
+				<button id="send_money_button">Send</button>
+			</p>
+		</div>
+	</div>
 </body>
 </html>
