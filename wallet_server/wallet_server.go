@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"text/template"
 
+	"github.com/jagottsicher/myGoBlockchain/utils"
 	"github.com/jagottsicher/myGoBlockchain/wallet"
 )
 
@@ -53,9 +54,20 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		io.WriteString(w, string(utils.JsonStatus("Wubba Lubba Dub Dub")))
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("ERROR: Invalid HTTP method")
+	}
+}
+
 func (ws *WalletServer) Run() {
 	http.HandleFunc("/", ws.Index)
 	http.HandleFunc("/wallet", ws.Wallet)
+	http.HandleFunc("/transaction", ws.CreateTransaction)
 
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.Port())), nil))
 }
