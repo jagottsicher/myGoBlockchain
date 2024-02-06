@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -57,7 +59,35 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, r *http.Request) {
 func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
-		io.WriteString(w, string(utils.JsonStatus("Wubba Lubba Dub Dub")))
+		decoder := json.NewDecoder(r.Body)
+		var t wallet.TransactionRequest
+		err := decoder.Decode(&t)
+		if err != nil {
+			log.Printf("ERROR: %v", err)
+			io.WriteString(w, string(utils.JsonStatus("fail")))
+			return
+		}
+
+		if !t.Validate() {
+			log.Println("ERROR: missing field(s)")
+			io.WriteString(w, string(utils.JsonStatus("fail")))
+			return
+		}
+
+		publicKey := utils.String2PublicKey(*t.SenderPublicKey)
+		privateKey := utils.String2PrivateKey(*t.SenderPrivateKey, publicKey)
+		value, _ := strconv.ParseFloat(*t.Value, 32)
+		if err != nil {
+			log.Println("ERROR: parse error")
+			io.WriteString(w, string(utils.JsonStatus("fail")))
+			return
+		}
+		value32 := float32(value)
+
+		fmt.Println(publicKey)
+		fmt.Println(privateKey)
+		fmt.Printf("%.1f", value32)
+
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		log.Println("ERROR: Invalid HTTP method")
