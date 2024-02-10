@@ -33,6 +33,10 @@ func NewBlockchain(blockchainAddress string, port uint16) *Blockchain {
 	return bc
 }
 
+func (bc *Blockchain) TransactionPool() []*Transaction {
+	return bc.transactionPool
+}
+
 func (bc *Blockchain) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Blocks []*Block `json:"chain"`
@@ -46,6 +50,13 @@ func (bc *Blockchain) CreateBlock(nonce int, previousHash [32]byte) *Block {
 	bc.chain = append(bc.chain, b)
 	bc.transactionPool = []*Transaction{}
 	return b
+}
+
+func (bc *Blockchain) CreateTransaction(sender string, recipient string, value float32, senderPublicKey *ecdsa.PublicKey, s *utils.Signature) bool {
+	isTransacted := bc.AddTransaction(sender, recipient, value, senderPublicKey, s)
+	// TODO
+	// sync
+	return isTransacted
 }
 
 func (bc *Blockchain) AddTransaction(sender string, recipient string, value float32, senderPublicKey *ecdsa.PublicKey, s *utils.Signature) bool {
