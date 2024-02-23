@@ -15,7 +15,7 @@ func IsFoundNode(host string, port uint16) bool {
 
 	_, err := net.DialTimeout("tcp", target, 1*time.Second)
 	if err != nil {
-		fmt.Printf("%s %v\n", target, err)
+		// fmt.Printf("%s %v\n", target, err)
 		return false
 	}
 	return true
