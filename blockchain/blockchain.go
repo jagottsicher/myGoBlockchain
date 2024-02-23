@@ -48,6 +48,10 @@ func NewBlockchain(blockchainAddress string, port uint16) *Blockchain {
 	return bc
 }
 
+func (bc *Blockchain) Chain() []*Block {
+	return bc.chain
+}
+
 func (bc *Blockchain) Run() {
 	bc.StartSyncNeighbors()
 }
@@ -268,6 +272,36 @@ func (bc *Blockchain) ValidChain(chain []*Block) bool {
 	return true
 }
 
+func (bc *Blockchain) ResolveConflicts() bool {
+	var longestChain []*Block = nil
+	maxLength := len(bc.chain)
+
+	for _, n := range bc.neighbors {
+		endpoint := fmt.Sprintf("http://%s/chain", n)
+		resp, _ := http.Get(endpoint)
+		if resp.StatusCode == 200 {
+			var bcResponse Blockchain
+			decoder := json.NewDecoder(resp.Body)
+			_ = decoder.Decode(&bcResponse)
+
+			chain := bcResponse.Chain()
+
+			if len(chain) > maxLength && bc.ValidChain(chain) {
+				maxLength = len(chain)
+				longestChain = chain
+			}
+		}
+	}
+
+	if longestChain != nil {
+		bc.chain = longestChain
+		log.Printf("Resolved conflicts: blockchain was replaced")
+		return true
+	}
+	log.Printf("Resolved conflicts: blockchain was nor replaced")
+	return false
+}
+
 type AmountResponse struct {
 	Amount float32 `json:"amount"`
 }
@@ -278,4 +312,16 @@ func (ar *AmountResponse) MarshalJSON() ([]byte, error) {
 	}{
 		Amount: ar.Amount,
 	})
+}
+
+func (bc *Blockchain) UnmarshalJSON(data []byte) error {
+	v := &struct {
+		Blocks *[]*Block `json: "chain"`
+	}{
+		Blocks: &bc.chain,
+	}
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	return nil
 }
