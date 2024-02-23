@@ -249,6 +249,25 @@ func (bc *Blockchain) CalculateTotalAmount(blockchainAddress string) float32 {
 	return totalAmount
 }
 
+func (bc *Blockchain) ValidChain(chain []*Block) bool {
+	previousBlock := chain[0]
+	currentIndex := 1
+	for currentIndex < len(chain) {
+		b := chain[currentIndex]
+		if b.previousHash != previousBlock.Hash() {
+			return false
+		}
+
+		if !bc.ValidProof(b.Nonce(), b.PreviousHash(), b.Transactions(), MINING_DIFFICULTY) {
+			return false
+		}
+
+		previousBlock = b
+		currentIndex += 1
+	}
+	return true
+}
+
 type AmountResponse struct {
 	Amount float32 `json:"amount"`
 }
